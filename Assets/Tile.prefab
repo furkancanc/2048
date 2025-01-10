@@ -90,6 +90,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 5158726997473325976}
+  tileSettings: {fileID: 11400000, guid: 5127ebbd90324004a8965513143f8a8e, type: 2}
 --- !u!1 &5911735308955590109
 GameObject:
   m_ObjectHideFlags: 0
