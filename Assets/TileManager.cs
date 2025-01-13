@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -18,8 +19,12 @@ public class TileManager : MonoBehaviour
     private bool _isAnimating;
 
     [SerializeField] private TileSettings tileSettings;
+    [SerializeField] private UnityEvent<int> scoreUpdated;
 
     private Stack<GameState> _gameStates = new Stack<GameState>();
+
+    private int _score;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -49,6 +54,12 @@ public class TileManager : MonoBehaviour
         _lastYInput = yInput;
     }
 
+    public void AddScore(int value)
+    {
+        _score += value;
+        scoreUpdated.Invoke(_score);
+    }
+    
     public void RestartGame()
     {
         var activeScene = SceneManager.GetActiveScene();
@@ -185,7 +196,7 @@ public class TileManager : MonoBehaviour
 
         if (_tilesUpdated)
         {
-            _gameStates.Push(new GameState() {tileValues =  preMoveTileValues});
+            _gameStates.Push(new GameState() {tileValues =  preMoveTileValues, score = _score});
             UpdateTilePositions(false);    
         }
     }
@@ -207,7 +218,7 @@ public class TileManager : MonoBehaviour
         return result;
     }
 
-    public void LoadLastTileValues()
+    public void LoadLastGameState()
     {
         if (_isAnimating)
         {
@@ -220,7 +231,10 @@ public class TileManager : MonoBehaviour
         }
 
         GameState previousGameState = _gameStates.Pop();
-
+        
+        _score = previousGameState.score;
+        scoreUpdated.Invoke(_score);
+        
         foreach (Tile t in _tiles)
         {
             if (t != null)

@@ -20,10 +20,12 @@ public class Tile : MonoBehaviour
 
     private Tile _mergeTile;
     private Animator _animator;
+    private TileManager _tileManager;
 
     private void Start()
     {
         _animator = GetComponent<Animator>();
+        _tileManager = FindObjectOfType<TileManager>();
     }
 
     public void SetValue(int value)
@@ -48,8 +50,10 @@ public class Tile : MonoBehaviour
             _isAnimating = false;
             if (_mergeTile != null)
             {
+                int newValue = _value + _mergeTile._value;
+                _tileManager.AddScore(newValue);
+                SetValue(newValue);
                 _animator.SetTrigger("Merge");
-                SetValue(_value + _mergeTile._value);
                 Destroy(_mergeTile.gameObject);
                 _mergeTile = null;
             }
