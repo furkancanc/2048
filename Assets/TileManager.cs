@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 public class TileManager : MonoBehaviour
 {
@@ -22,9 +23,10 @@ public class TileManager : MonoBehaviour
     [SerializeField] private UnityEvent<int> scoreUpdated;
     [SerializeField] private UnityEvent<int> bestScoreUpdated;
     [SerializeField] private UnityEvent<int> moveCountUpdated;
+    [SerializeField] private UnityEvent<System.TimeSpan> gameTimeUpdated;
     
     private Stack<GameState> _gameStates = new Stack<GameState>();
-
+    private System.Diagnostics.Stopwatch _gameStopwatch = new System.Diagnostics.Stopwatch();
     private int _score;
     private int _bestScore;
     private int _moveCount;
@@ -36,7 +38,8 @@ public class TileManager : MonoBehaviour
         TrySpawnTile();
         TrySpawnTile();
         UpdateTilePositions(true);
-
+        
+        _gameStopwatch.Start();
         _bestScore = PlayerPrefs.GetInt("BestScore", 0);
         bestScoreUpdated.Invoke(_bestScore);
     }
@@ -47,6 +50,8 @@ public class TileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        gameTimeUpdated.Invoke(_gameStopwatch.Elapsed);
+        
         var xInput = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
         var yInput = Mathf.RoundToInt(Input.GetAxisRaw("Vertical"));
         if (_lastXInput == 0 && _lastYInput == 0)
