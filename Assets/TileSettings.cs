@@ -5,5 +5,5 @@ public class TileSettings : ScriptableObject
 {
     public float AnimationTime = .3f;
     public AnimationCurve AnimationCurve;
-
+    public TileColor[] TileColors;
 }

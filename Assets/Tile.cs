@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
 {
@@ -22,16 +24,22 @@ public class Tile : MonoBehaviour
     private Animator _animator;
     private TileManager _tileManager;
 
-    private void Start()
+    private Image _tileImage;
+    private void Awake()
     {
         _animator = GetComponent<Animator>();
         _tileManager = FindObjectOfType<TileManager>();
+        _tileImage = GetComponent<Image>();
     }
 
     public void SetValue(int value)
     {
         _value = value;
         text.text = value.ToString();
+        
+        TileColor newColor = tileSettings.TileColors.FirstOrDefault(color => color.value == _value) ?? new TileColor();
+        text.color = newColor.fgColor;
+        _tileImage.color = newColor.bgColor;
     }
 
     private void Update()
