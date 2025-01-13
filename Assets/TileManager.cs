@@ -20,10 +20,12 @@ public class TileManager : MonoBehaviour
 
     [SerializeField] private TileSettings tileSettings;
     [SerializeField] private UnityEvent<int> scoreUpdated;
+    [SerializeField] private UnityEvent<int> bestScoreUpdated;
 
     private Stack<GameState> _gameStates = new Stack<GameState>();
 
     private int _score;
+    private int _bestScore;
     
     // Start is called before the first frame update
     void Start()
@@ -32,6 +34,9 @@ public class TileManager : MonoBehaviour
         TrySpawnTile();
         TrySpawnTile();
         UpdateTilePositions(true);
+
+        _bestScore = PlayerPrefs.GetInt("BestScore", 0);
+        bestScoreUpdated.Invoke(_bestScore);
     }
 
     private int _lastXInput;
@@ -58,6 +63,12 @@ public class TileManager : MonoBehaviour
     {
         _score += value;
         scoreUpdated.Invoke(_score);
+        if (_score > _bestScore)
+        {
+            _bestScore = _score;
+            bestScoreUpdated.Invoke(_bestScore);
+            PlayerPrefs.SetInt("BestScore", _bestScore);
+        }
     }
     
     public void RestartGame()
