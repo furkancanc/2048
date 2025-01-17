@@ -7,7 +7,8 @@ public class ScoreDisplay : MonoBehaviour
 {
     private TMP_Text _text;
     private Animator _animator;
-    void Start()
+
+    private void Awake()
     {
         _text = GetComponent<TMP_Text>();
         _animator = GetComponent<Animator>();
@@ -16,6 +17,9 @@ public class ScoreDisplay : MonoBehaviour
     public void UpdateScore(int score)
     {
         _text.text = score.ToString();
-        _animator.SetTrigger("ScoreUpdated");
+        if (_animator != null)
+        {
+            _animator.SetTrigger("ScoreUpdated");
+        }
     }
 }
