@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 using Debug = UnityEngine.Debug;
 
 public class TileManager : MonoBehaviour
@@ -28,6 +29,9 @@ public class TileManager : MonoBehaviour
     
     private Stack<GameState> _gameStates = new Stack<GameState>();
     private System.Diagnostics.Stopwatch _gameStopwatch = new System.Diagnostics.Stopwatch();
+
+    private IInputManager _inputManager = new MultipleInputManager(new KeybordInputManager(), new SwipeInputManager());
+
     private int _score;
     private int _bestScore;
     private int _moveCount;
@@ -45,26 +49,19 @@ public class TileManager : MonoBehaviour
         bestScoreUpdated.Invoke(_bestScore);
     }
 
-    private int _lastXInput;
-    private int _lastYInput;
+   
     
     // Update is called once per frame
     void Update()
     {
         gameTimeUpdated.Invoke(_gameStopwatch.Elapsed);
-        
-        var xInput = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
-        var yInput = Mathf.RoundToInt(Input.GetAxisRaw("Vertical"));
-        if (_lastXInput == 0 && _lastYInput == 0)
-        {
-            if (!_isAnimating)
-            {
-                TryMove(xInput, yInput);    
-            }
-        }
 
-        _lastXInput = xInput;
-        _lastYInput = yInput;
+        InputResult input = _inputManager.GetInput();
+
+        if (!_isAnimating)
+        {
+            TryMove(input.XInput, input.YInput);
+        }
     }
 
     public void AddScore(int value)
